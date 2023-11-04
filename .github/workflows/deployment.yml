@@ -35,6 +35,11 @@ jobs:
             - name: Build Project
               run: npm run build
               working-directory: ./sample-react-project-01
+            - name: Upload Artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                name: dist-files
+                path: dist
             - name: Deploy
               run: echo "Deploying..."
               working-directory: ./sample-react-project-01
