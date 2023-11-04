@@ -39,7 +39,7 @@ jobs:
               uses: actions/upload-artifact@v3
               with:
                 name: dist-files
-                path: dist
+                path: ./sample-react-project-01/dist
             - name: Deploy
               run: echo "Deploying..."
               working-directory: ./sample-react-project-01
