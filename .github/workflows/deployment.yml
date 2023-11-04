@@ -16,3 +16,22 @@ jobs:
             - name: Run tests
               run: npm test
               working-directory: ./sample-react-project-01
+    deploy:
+        needs: test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Getcode
+              uses: actions/checkout@v4
+            - name: Install Node JS
+              uses: actions/setup-node@v3
+              with:
+                node-version: 18
+            - name: Install dependencies
+              run: npm ci
+              working-directory: ./sample-react-project-01
+            - name: Build Project
+              run: npm run build
+              working-directory: ./sample-react-project-01
+            - name: Deploy
+              run: echo "Deploying..."
+              working-directory: ./sample-react-project-01
