@@ -45,4 +45,4 @@ jobs:
               working-directory: ./sample-react-project-01
             - name: Print Environment Variables
               run: |
-                echo "Print Github Actor env variable : ${{env.GITHUB_ACTOR}}"
+                echo "Print Github Actor env variable : ${{github.actor}}"
