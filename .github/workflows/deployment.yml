@@ -43,3 +43,5 @@ jobs:
             - name: Deploy
               run: echo "Deploying..."
               working-directory: ./sample-react-project-01
+            - name: Print Environment Variables
+              run: echo ${{env.GITHUB_ACTOR}}
