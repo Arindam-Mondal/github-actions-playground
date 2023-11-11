@@ -45,6 +45,11 @@ jobs:
               with:
                 name: dist-files
                 path: ./sample-react-project-01/dist
+            - name: Uploading Test Artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                name: test-report
+                path: ./sample-react-project-01/test.json
             - name: Deploy
               run: echo "Deploying..."
               working-directory: ./sample-react-project-01
