@@ -18,8 +18,10 @@ jobs:
         - name : Install dependencies
           if: steps.cache.outputs.cache-hit != 'true'
           run: npm ci
+          working-directory: ./sample-react-project-01
         - name: Lint code
           run: npm run lint
+          working-directory: ./sample-react-project-01
     test:
       env:
         DB_USERNAME: ${{ secrets.DB_USERNAME }}
