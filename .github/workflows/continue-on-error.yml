@@ -1,0 +1,87 @@
+name: Continue On Error
+on: 
+    push:
+        branches:
+            - main
+jobs:
+    lint:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Get code
+          uses: actions/checkout@v3
+        - name: Cache dependencies
+          id: cache
+          uses: actions/cache@v3
+          with: 
+            path: ./sample-react-project-01/node_modules
+            key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+        - name : Install dependencies
+          if: steps.cache.outputs.cache-hit != 'true'
+          run: npm ci
+          working-directory: ./sample-react-project-01
+        - name: Lint code
+          run: npm run lint
+          working-directory: ./sample-react-project-01
+    test:
+      env:
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      runs-on: ubuntu-latest
+      steps:
+          - name: Get code
+            uses: actions/checkout@v4
+          - name: Install Node JS
+            uses: actions/setup-node@v3
+            with:
+              node-version: 18
+          - name: Install dependencies
+            run: npm ci
+            working-directory: ./sample-react-project-01
+          - name: Test code
+            continue-on-error: true
+            id: run-tests
+            run: npm run test
+            working-directory: ./sample-react-project-01
+          - name: Uploading Test Report
+            uses: actions/upload-artifact@v3
+            with:
+              name: test-report
+              path: ./sample-react-project-01/test.json
+          - name: Print env variables
+            run: echo "Printing env variables ${{env.DB_USERNAME}}"
+    deploy:
+        needs: test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Getcode
+              uses: actions/checkout@v4
+            - name: Install Node JS
+              uses: actions/setup-node@v3
+              with:
+                node-version: 18
+            - name: Install dependencies
+              run: npm ci
+              working-directory: ./sample-react-project-01
+            - name: Build Project
+              run: npm run build
+              working-directory: ./sample-react-project-01
+            - name: Upload Artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                name: dist-files
+                path: ./sample-react-project-01/dist
+            - name: Deploy
+              run: echo "Deploying..."
+              working-directory: ./sample-react-project-01
+            - name: Print Environment Variables
+              run: |
+                echo "Print Github Actor env variable : ${{github.actor}}"
+    report:
+      needs: [lint, deploy]
+      if: failure()
+      runs-on: ubuntu-latest
+      steps:
+        - name: Output Information
+          run: |
+            echo "Something went wrong"
+            echo "${{toJSON(github)}}"
