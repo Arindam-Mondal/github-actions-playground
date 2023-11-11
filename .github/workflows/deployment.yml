@@ -76,3 +76,12 @@ jobs:
             - name: Print Environment Variables
               run: |
                 echo "Print Github Actor env variable : ${{github.actor}}"
+    report:
+      needs: [lint, deploy]
+      if: failure()
+      runs-on: ubuntu-latest
+      steps:
+        - name: Output Information
+          run: |
+            echo "Something went wrong"
+            echo "${{toJSON(github)}}"
